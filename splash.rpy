@@ -145,7 +145,7 @@ image menu_art_s_glitch_move:
     "mod_assets/s_animation/menu_art_s_break_move.png"
     0.1
     repeat
-        
+
 image menu_art_y:
     subpixel True
     "menu_art_y_blink"
