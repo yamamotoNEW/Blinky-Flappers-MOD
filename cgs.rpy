@@ -422,8 +422,8 @@ image y_cg3_mouth:
     0.21
     "mod_assets/y_animation/y_cg3_mouth_0.png"
     0.21
-    repeat 
-    
+    repeat
+
 image y_cg3_base = LiveComposite((1280,720),(0,0),"images/cg/y_cg3_base.png",(0,0),"y_cg3_eye",(0,0),WhileSpeaking("yuri","y_cg3_mouth","mod_assets/y_animation/y_cg3_mouth_1.png"))
 image y_cg3_exp1 = LiveComposite((1280,720),(0,0),"images/cg/y_cg3_exp1.png",(0,0),WhileSpeaking("yuri","y_cg3_mouth","mod_assets/y_animation/y_cg3_mouth_1.png"))
 
