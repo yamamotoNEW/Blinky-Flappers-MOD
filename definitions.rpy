@@ -222,7 +222,7 @@ image glitch_color2:
 
 
 # Sayori
-# definitions of Sayori's expression parts 
+# definitions of Sayori's expression parts
 image s_eye_0:
     "mod_assets/s_animation/s_eye_a.png"
     choice:
@@ -310,7 +310,7 @@ image s_mouth_4:
     "mod_assets/s_animation/s_mouth_e.png"
     0.15
     repeat
-image s_mouth_5 = "mod_assets/s_animation/s_mouth_e.png"    
+image s_mouth_5 = "mod_assets/s_animation/s_mouth_e.png"
 image s_mouth_6 = "mod_assets/s_animation/s_mouth_f.png"
 image s_mouth_7:
     "mod_assets/s_animation/s_mouth_m.png"
@@ -664,7 +664,7 @@ image n_eye_5:
     "mod_assets/n_animation/n_eye_2btf.png"
     0.1
     repeat
-    
+
 image n_mouth_0 = "mod_assets/n_animation/n_mouth_a.png"
 image n_mouth_1 = "mod_assets/n_animation/n_mouth_b.png"
 image n_mouth_2 = "mod_assets/n_animation/n_mouth_c.png"
@@ -762,7 +762,7 @@ image natsuki_y =LiveComposite((960,960),(0,1),"natsuki/y.png",(0,1),WhileSpeaki
 image natsuki_z =LiveComposite((960,960),(0,1),"natsuki/z.png",(0,1),WhileSpeaking("natsuki" or "nat&yuri","n_mouth_9","n_mouth_7"))
 image natsuki_1t= "natsuki_a"
 image natsuki_4t= "natsuki/old2/4t.png"
-image natsuki_scream =LiveComposite((960,960),(0,1),"natsuki/scream.png",(0,1),WhileSpeaking("natsuki" or "nat&yuri","n_mouth_scream","n_mouth_4")) 
+image natsuki_scream =LiveComposite((960,960),(0,1),"natsuki/scream.png",(0,1),WhileSpeaking("natsuki" or "nat&yuri","n_mouth_scream","n_mouth_4"))
 
 image natsuki 11 = LiveComposite((960, 960), (0, 0), "natsuki/1l.png", (0, 0), "natsuki/1r.png", (0, 0), "natsuki_1t")
 image natsuki 1a = LiveComposite((960, 960), (0, 0), "natsuki/1l.png", (0, 0), "natsuki/1r.png", (0, 0), "natsuki_a")
@@ -1317,7 +1317,7 @@ image y_mouth_6:
     "mod_assets/y_animation/y_mouth_y2.png"
     0.15
     repeat
-image y_mouth_7 = "mod_assets/y_animation/y_mouth_n.png"    
+image y_mouth_7 = "mod_assets/y_animation/y_mouth_n.png"
 image y_mouth_8 = "mod_assets/y_animation/y_mouth_y2.png"
 image y_mouth_9:
     "mod_assets/y_animation/y_mouth_r.png"
@@ -1758,7 +1758,7 @@ image m_mouth_4:
     0.15
     "mod_assets/m_animation/m_mouth_3a.png"
     0.15
-    repeat 
+    repeat
 image m_mouth_5:
     "mod_assets/m_animation/m_mouth_3c.png"
     0.15
@@ -1771,7 +1771,7 @@ image m_mouth_8 = "mod_assets/m_animation/m_mouth_b.png"
 image m_mouth_9 = "mod_assets/m_animation/m_mouth_d.png"
 
 
-    
+
 # building Monika's face animations
 image monika_a =LiveComposite((960,960),(0,1),"monika/a.png",(0,1),"m_eye_0",(0,1),WhileSpeaking("monika","m_mouth_0","m_mouth_2"))
 image monika_b =LiveComposite((960,960),(0,1),"monika/b.png",(0,1),"m_eye_0",(0,1),WhileSpeaking("monika","m_mouth_0","m_mouth_8"))
@@ -1919,8 +1919,8 @@ image monika g2:
             pause 0.2
     repeat
 
-## If the dialogue matches one of the following, "speaking" will be reset to None.
-#define not_lip_sync = ['"..."', '"...?"', '「……」', '「……？」', '"......"', '「………」', '「…………」', '...', "...?",]
+## If a dialogue matches one of the following, stop mouth animation.
+define not_lip_sync = ['...', '...?', '「……」', '「……？」', '......', '「………」', '「…………」']
 
 # This is set to the name of the character that is speaking, or
 # None if no character is currently speaking.
@@ -1928,53 +1928,54 @@ image monika g2:
 # because we don't want to include it in the save data.
 define speaking = None
 
+# Holds the currently displayed dialogue.
+# It's not a constant, but it's defined as "define"
+# because we don't want to include it in the save data.
+define current_dialogue = None
+
 # Mouth-flapping algorithm
-init python:  
+init python:
     # Re-set the callback to the ADVCharacter replaced by the translation.
-    def set_character_callback(): 
+    def set_character_callback():
         s.display_args["callback"] = speaker("sayori")
         m.display_args["callback"] = speaker("monika")
         n.display_args["callback"] = speaker("natsuki")
         y.display_args["callback"] = speaker("yuri")
         ny.display_args["callback"] = speaker("nat&yuri")
-    renpy.config.change_language_callbacks.append(set_character_callback)
-    
-    # This returns speaking if the character is speaking, 
+    config.change_language_callbacks.append(set_character_callback)
+
+    # This returns speaking if the character is speaking,
     # and done if the character is not.
     def while_speaking(name, speak_d, done_d, st, at):
         if speaking == name:
             return speak_d, .1
         else:
             return done_d, None
-  
+
     # Curried form of the above.
     curried_while_speaking = renpy.curry(while_speaking)
-  
+
     # Displays speaking when the named character is speaking, and done otherwise.
     def WhileSpeaking(name, speaking_d, done_d=Null()):
         return DynamicDisplayable(curried_while_speaking(name, speaking_d, done_d))
-  
+
+    # Get the current conversation and save it global
+    def get_current_dialogue(what):
+        global current_dialogue
+        current_dialogue = what
+        return what
+    config.say_menu_text_filter = get_current_dialogue
+
     # This callback maintains the speaking variable.
     def speaker_callback(name, event, **kwargs):
-        global speaking   
-        
-        if event == "show":
+        global speaking
+
+        if event == "show" and not current_dialogue in not_lip_sync:
             speaking = name
-        elif event == "slow_done":
-            speaking = None
-        elif event == "end":
+        elif event == "slow_done" or event == "end":
             speaking = None
     speaker = renpy.curry(speaker_callback)
-    
-    # Mouth animation doesn't move when the speaker keeps silent like '...'
-#    def is_talking(what):
-#        global speaking
-        
-#        if what == '"..."' or what == '"...?"' or what == '"......"' : #in not_lip_sync:
-#            speaking = None
-#        return what
-#    config.say_menu_text_filter = is_talking
- 
+
 
 define narrator = Character(ctc="ctc", ctc_position="fixed")
 define mc = DynamicCharacter('player', what_prefix='"', what_suffix='"', ctc="ctc", ctc_position="fixed")
