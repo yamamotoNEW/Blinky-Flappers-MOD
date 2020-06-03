@@ -1919,14 +1919,19 @@ image monika g2:
             pause 0.2
     repeat
 
-## If the dialogue matches one of the following, "speaking" will be reset to None.
-#define not_lip_sync = ['"..."', '"...?"', '「……」', '「……？」', '"......"', '「………」', '「…………」', '...', "...?",]
+## If a dialogue matches one of the following, stop mouth animation.
+define not_lip_sync = ['...', '...?', '「……」', '「……？」', '......', '「………」', '「…………」']
 
 # This is set to the name of the character that is speaking, or
 # None if no character is currently speaking.
 # It's not a constant, but it's defined as "define"
 # because we don't want to include it in the save data.
 define speaking = None
+
+# Holds the currently displayed dialogue.
+# It's not a constant, but it's defined as "define"
+# because we don't want to include it in the save data.
+define current_dialogue = None
 
 # Mouth-flapping algorithm
 init python:
@@ -1937,7 +1942,7 @@ init python:
         n.display_args["callback"] = speaker("natsuki")
         y.display_args["callback"] = speaker("yuri")
         ny.display_args["callback"] = speaker("nat&yuri")
-    renpy.config.change_language_callbacks.append(set_character_callback)
+    config.change_language_callbacks.append(set_character_callback)
 
     # This returns speaking if the character is speaking,
     # and done if the character is not.
@@ -1954,26 +1959,22 @@ init python:
     def WhileSpeaking(name, speaking_d, done_d=Null()):
         return DynamicDisplayable(curried_while_speaking(name, speaking_d, done_d))
 
+    # Get the current conversation and save it global
+    def get_current_dialogue(what):
+        global current_dialogue
+        current_dialogue = what
+        return what
+    config.say_menu_text_filter = get_current_dialogue
+
     # This callback maintains the speaking variable.
     def speaker_callback(name, event, **kwargs):
         global speaking
 
-        if event == "show":
+        if event == "show" and not current_dialogue in not_lip_sync:
             speaking = name
-        elif event == "slow_done":
-            speaking = None
-        elif event == "end":
+        elif event == "slow_done" or event == "end":
             speaking = None
     speaker = renpy.curry(speaker_callback)
-
-    # Mouth animation doesn't move when the speaker keeps silent like '...'
-#    def is_talking(what):
-#        global speaking
-
-#        if what == '"..."' or what == '"...?"' or what == '"......"' : #in not_lip_sync:
-#            speaking = None
-#        return what
-#    config.say_menu_text_filter = is_talking
 
 
 define narrator = Character(ctc="ctc", ctc_position="fixed")
