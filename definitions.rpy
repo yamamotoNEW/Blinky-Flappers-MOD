@@ -1177,7 +1177,7 @@ image natsuki glitch1:
     yoffset 0 zoom 1 xoffset 0 ytile 1
     "natsuki 4e"
 
-image natsuki scream = im.Composite((960, 960), (0, 0), "natsuki/1l.png", (0, 0), "natsuki/1r.png", (0, 0), "natsuki_scream")
+image natsuki scream = LiveComposite((960, 960), (0, 0), "natsuki/1l.png", (0, 0), "natsuki/1r.png", (0, 0), "natsuki_scream")
 image natsuki vomit = "natsuki/vomit.png"
 
 image n_blackeyes = "images/natsuki/blackeyes.png"
