@@ -140,8 +140,8 @@ init python:
     dismiss_keys = config.keymap['dismiss']
 
     def slow_nodismiss(event, interact=True, **kwargs):
-        if not persistent.monika_kill:
-            m.display_args["callback"] = speaker("monika")
+        speaker_callback("monika", event, interact=interact, **kwargs)
+        if event != "slow_done" and not persistent.monika_kill:
             try:
                 renpy.file("../characters/monika.chr")
             except:

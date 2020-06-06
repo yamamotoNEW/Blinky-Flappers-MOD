@@ -1938,7 +1938,7 @@ init python:
     # Re-set the callback to the ADVCharacter replaced by the translation.
     def set_character_callback():
         s.display_args["callback"] = speaker("sayori")
-        m.display_args["callback"] = speaker("monika")
+        m.display_args["callback"] = speaker("monika") if persistent.playthrough <= 2 else slow_nodismiss
         n.display_args["callback"] = speaker("natsuki")
         y.display_args["callback"] = speaker("yuri")
         ny.display_args["callback"] = speaker("nat&yuri")
