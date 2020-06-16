@@ -8,6 +8,8 @@ Made by yamamotoNEW. Thanks to the Renpy Tom and some Ren'py experts who made th
 
 ## How to play
 
+Download here: https://github.com/yamamotoNEW/Blinky-Flappers-MOD/releases
+
 Extract the zip,copy `game` folder, paste it on original DDLC's `game` folder and start the game.  
 **DON'T USE THE Steam ver. DDLC. DOWNLOAD THE VANILLA DDLC AND USE IT, PLEASE.**  
 
